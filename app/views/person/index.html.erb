@@ -1,4 +1,4 @@
 <h1>All People</h1>
 <% @people.each do | p |   %>
-    <p>H: <%= p.height %> and P:<%= p.preference %><p>
+    <p>(<%= p.id %>) - H: <%= p.height %> and P:<%= p.preference %><p>
 <% end %>

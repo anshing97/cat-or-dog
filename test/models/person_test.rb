@@ -26,12 +26,12 @@ class PersonTest < ActiveSupport::TestCase
         assert person.preference == 'dog'
     end
 
+    # Test arguments
     test "should only be able to assign cat and dog as preference" do
         person = Person.new
         assert person.preference = 'cat'
         assert person.preference = 'dog'
-        # person.preference = 'Something'
-
+        # person.preference = 'Something' how do I assert this?
     end
 
 
