@@ -1,9 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  height: 1
+cat_lover:
+  height: 10001
+  preference: 0
+
+dog_lover:
+  height: 10001
   preference: 1
 
-two:
-  height: 1
-  preference: 1
+invalid_preference:
+  height: 10001
+  preference: 2
