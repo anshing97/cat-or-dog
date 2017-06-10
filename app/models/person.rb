@@ -9,16 +9,18 @@ class Person < ApplicationRecord
             presence: true,
             numericality: {
                 greater_than_or_equal_to: MIN_HEIGHT,
-                less_than_or_equal_to: MAX_HEIGHT
+                less_than_or_equal_to: MAX_HEIGHT,
+                message: "must be in between #{Person::MIN_HEIGHT} and #{Person::MAX_HEIGHT}"
             }
-
-    validates :preference,
-            presence: true
-
 
     # limit options to cat and dogs
     enum preference: [:cat, :dog]
 
-
+    validates :preference,
+            presence: true
+            # inclusion: {
+            #     in: preferences.keys,
+            #     message: "values must be #{preferences.keys}"
+            # }
 
 end
