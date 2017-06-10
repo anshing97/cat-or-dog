@@ -9,7 +9,7 @@ Determine Cats and dogs preference based on height.
 
 Store height and preference
 ```
-person?height=123&preference=dog
+new_person?height=123&preference=dog
 ```
 
 ### Get
@@ -26,9 +26,9 @@ Response:
 
 ---
 
-Get percentage of a height
+Get preference of a height
 ```
-percentage?height=123
+preference?height=123
 ```
 Response:
 ```
@@ -38,9 +38,9 @@ Response:
 ```
 ---
 
-Get percentage of all heights
+Get preferences of all heights
 ```
-percentage?height=all
+preference?height=all
 ```
 Response:
 ```
@@ -54,6 +54,8 @@ Response:
 # Storing Data
 
 *Person*
-Height: number
+Height: number (in inches)
 Preference: `dog` or `cat` (enum?)
+
+
 

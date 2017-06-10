@@ -51,16 +51,18 @@ class PersonController < ApplicationController
         num_cat = Person.where(height: guess_height, preference: 'dog').count.to_f
         num_dog = Person.where(height: guess_height, preference: 'cat').count.to_f
 
+        # get a random value to compare
         cat_percentage = num_cat / ( num_cat + num_dog )
-
         random = Random.rand
 
+        # figure out what our guess is
         guess = if random < cat_percentage
             'cat'
         else
             'dog'
         end
 
+        # render it, along with some other values for debugging
         render :json => {
             :guess => guess,
             :cat_percentage => cat_percentage,
