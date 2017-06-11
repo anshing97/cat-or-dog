@@ -6,7 +6,7 @@ class PersonController < ApplicationController
         @person.preference = params['preference']
 
         if @person.save
-            render :json => { :response => 'Saved'}
+            render :json => @person
         else
             render :json => { :response => 'Error', :message => @person.errors.full_messages.join('; ') }
         end
@@ -19,7 +19,7 @@ class PersonController < ApplicationController
 
         if ( value == 'all' )
 
-
+            # Ben todo
 
         else
             query_height = value.to_i
@@ -39,7 +39,7 @@ class PersonController < ApplicationController
         if error
             render :json => { :response => 'Error', :message => error }
         else
-            render :json => { :cat => cat_percentage, :dog => dog_percentage }
+            render :json => { :cat => cat_percentage.round(2), :dog => dog_percentage.round(2) }
         end
 
     end
@@ -52,7 +52,7 @@ class PersonController < ApplicationController
         num_dog = Person.where(height: guess_height, preference: 'cat').count.to_f
 
         # get a random value to compare
-        cat_percentage = num_cat / ( num_cat + num_dog )
+        cat_percentage = ( num_cat / ( num_cat + num_dog ) ).round(2)
         random = Random.rand
 
         # figure out what our guess is
@@ -73,7 +73,7 @@ class PersonController < ApplicationController
 
     # show everthing
     def index
-        @people = Person.all
+        render :json => Person.all
     end
 
 

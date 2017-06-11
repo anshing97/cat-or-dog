@@ -58,4 +58,11 @@ Height: number (in inches)
 Preference: `dog` or `cat` (enum?)
 
 
+# References
+
+[Getting Started with Rails](http://guides.rubyonrails.org/getting_started.html)
+[Learn to Build Modern Web aApps with AngularJS and Ruby on Rails](https://thinkster.io/tutorials/angular-rails)
+[Installing bourbon for your rails project](https://howchoo.com/g/oti5mtcyzmj/install-bourbon-in-your-rails-project)
+
+
 

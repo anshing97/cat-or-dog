@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>CatOrDog</title>
+<head>
+    <title>Cat or Dog</title>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
     <%= csrf_meta_tags %>
+</head>
+<body ng-app="CatOrDog" ng-controller="MainController">
+    <div>
+        <h1>{{test}}</h1>
+        <div ng-repeat="p in preferences">
+            height of {{ p.height }} likes dogs {{ p.preference.dog * 100 }}% of the time and cats {{ p.preference.cat * 100 }}% of the time
+        </div>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+        <h1>People</h1>
+        <div ng-repeat="p in people">
+            A person of height {{ p.height }} likes says to like {{ p.preference }}
+        </div>
 
-  <body>
-    <%= yield %>
-  </body>
+        <form ng-submit="addPersonInfo()">
+            <input type="text" placeholder="height" ng-model="height"></input>
+            <input type="text" placeholder="preference" ng-model="preference"></input>
+            <button type="submit">Post</button>
+        </form>
+    </div>
+</body>
 </html>

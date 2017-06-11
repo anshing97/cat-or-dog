@@ -34,5 +34,22 @@ class PersonTest < ActiveSupport::TestCase
         # person.preference = 'Something' how do I assert this?
     end
 
+    test "should only be able to accept heights between MIN and MAX" do
+        person = Person.new
+        person.preference = 'cat'
+
+        person.height = Person::MIN_HEIGHT - 1
+        assert_not person.valid?
+
+        person.height = Person::MAX_HEIGHT + 1
+        assert_not person.valid?
+
+        5.times do
+            person.height = (Person::MIN_HEIGHT..Person::MAX_HEIGHT).to_a.sample
+            assert person.valid?
+        end
+
+    end
+
 
 end

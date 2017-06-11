@@ -1,8 +1,14 @@
 Rails.application.routes.draw do
 
-    get'/create_person' => 'person#new'
-    get'/people' => 'person#index'
-    get'/preference' => 'person#preference'
-    get'/guess' => 'person#guess'
+    root to: 'application#angular'
+
+
+    # posts
+    post '/create_person' => 'person#new'
+
+    # gets
+    get '/people' => 'person#index'
+    get '/preference' => 'person#preference'
+    get '/guess' => 'person#guess'
 
 end
