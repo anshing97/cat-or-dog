@@ -1,0 +1,41 @@
+// spacing
+$spacing: 20px;
+
+// colors
+$bg-color: #fffffc;
+$text-color: #292929;
+
+// some other colors
+$blue: #5CA4A9;
+$red: #EF626C;
+$light-blue: #9BC1BC;
+$cream: #E6EBE0;
+$yello: #F4F1BB;
+
+// transition
+$transition-speed: 0.2s;
+
+// setup our grids
+$small-grid: (
+    columns: 3,
+    gutter: 20px,
+);
+
+$full-grid: (
+    columns: 12,
+    gutter: 20px,
+    media: "(min-width: 768px)",
+);
+
+
+// some useful mixins
+@mixin visually-hidden {
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    padding:0 !important;
+    border:0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden;
+}

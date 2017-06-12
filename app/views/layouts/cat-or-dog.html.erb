@@ -1,0 +1,49 @@
+<body ng-app="CatOrDog" ng-controller="MainController">
+    <div class="full-height-block full-height-block--content-centered" ng-if="currentStage == 'intro'">
+        <div class="intro-block">
+            <h1 class="display">IBM Watson can now accurately calculate if you are a dog person or a cat person. He just needs to know your height. </h1>
+            <button class="button" ng-click="advance('height')">Tell Watson your height</button>
+        </div>
+    </div>
+    <div class="full-height-block" ng-mouse-wheel-up="increaseHeight()" ng-mouse-wheel-down="decreaseHeight()" ng-if="currentStage == 'height'">
+        <div class="content-block">
+            <p class="paragraph paragraph--emphasized">Enter your height</p>
+            <p class="paragraph paragraph--subtext">(scroll or use ▲ ▼ key)</p>
+            <div class="big-text">
+                <p>{{currentUser.height | imperialHeight }}</p>
+            </div>
+            <form>
+                <input id="height-input" type="number" name="height" min="48" max="96" ng-model="currentUser.height" ng-keep-focus data-should-keep-focus="{{currentStage === 'height'}}" />
+                <input type="submit" class="button" ng-click="advance('guess')" value="Continue"/>
+            </form>
+        </div>
+        <div class="height-block" ng-style="{height: heightPercentage + 'vh'}"></div>
+    </div>
+    <div class="full-height-block" ng-if="currentStage == 'guess'" >
+        <div class="content-block content-block--footer">
+            <div class="guess-block">
+                <div ng-if="!canShowGuess()">
+                    <p class="paragraph paragraph--emphasized">Watson is calculating your preference...</p>
+                </div>
+                <div ng-if="canShowGuess()">
+                    <p class="paragraph paragraph--emphasized">Watson says you are a {{currentUser.watsonGuess}} person</p>
+                    <button class="button button--fixed-width" ng-click="confirmGuess(true); advance('thanks');">{{currentUser.guessConfirmText}}</button>
+                    <button class="button button--fixed-width" ng-click="confirmGuess(false); advance('thanks');">Nope. Watson got it wrong.</button>
+                </div>
+            </div>
+        </div>
+        <div class="clip-block">
+            <img src="<%= asset_path('cat.svg') %>" class="illustration">
+        </div>
+        <div class="clip-block clip-block--clipped" ng-class="currentUser.clipClass" animationend="showGuessResults">
+            <img src="<%= asset_path('dog.svg') %>" class="illustration">
+        </div>
+    </div>
+    <div class="full-height-block" ng-if="currentStage == 'thanks'" >
+        <div class="content-block">
+            <h2 class="display">Thanks for taking our survey</h2>
+            <p class="paragraph">Because of your inputs, we've made Watson even more accurate in predicting people's preferences for dogs or cats.</p>
+            <button class="button" ng-click="advance('height')">Take the survey again</button>
+        </div>
+    </div>
+</body>

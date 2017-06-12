@@ -1,0 +1,53 @@
+.button {
+    @include transition(color $transition-speed, background-color $transition-speed);
+    padding: 1rem 2rem;
+    border: 2px solid $text-color;
+    color: $text-color;
+    background-color: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    &:hover {
+        color: white;
+        background-color: $text-color;
+    }
+    + .button {
+        margin: $spacing/2 0 0 0;
+    }
+    @include grid-media($full-grid){
+        display: inline-block;
+        width: auto;
+        + .button {
+            margin: 0 0 0 $spacing/2;
+        }
+    }
+}
+.button--inverted {
+    color: white;
+    border-color: white;
+    &:hover {
+        color: $text-color;
+        background-color: white;
+    }
+}
+.button--fixed-width {
+    @include grid-media($full-grid){
+        width: 280px;
+    }
+}
+
+// graphics
+.illustration {
+    @include position(absolute, 40% null null 50%);
+    @include transform(translate(-50%, -50%));
+    @include size(200px);
+    @include grid-media($full-grid){
+        @include size(300px);
+    }
+}
+
+// hack the forms
+input:not([type="submit"]) {
+    @include visually-hidden;
+}

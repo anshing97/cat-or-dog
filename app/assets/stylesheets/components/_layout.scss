@@ -1,0 +1,122 @@
+// make sure to use border box
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+// general setup
+html {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 16px;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: $bg-color;
+    color: $text-color;
+}
+
+.full-height-block {
+    height: 100vh;
+    min-height: 500px;
+    text-align: center;
+    position: relative;
+}
+
+.intro-block {
+    @include position(absolute, 45% null null 50%);
+    @include transform(translate(-50%, -50%));
+    width: 85%;
+    @include grid-media($full-grid){
+        width: 60%;
+    }
+}
+
+.content-block {
+    @include position(absolute, 50% null null 50%);
+    @include transform(translate(-50%, -50%)); // shift it slightly above 50% to give it a better reading experience
+    width: 85%;
+}
+.content-block--footer {
+    top: 80%;
+}
+
+.height-block {
+    @include position(fixed, null 0 0 0);
+    background: $blue;
+    z-index: -1; // make this behind everything
+}
+
+
+@include keyframes(selectLeft) {
+  0% {
+    clip: rect(0, 50vw, 100vh, 0);
+  }
+  20% {
+    clip: rect(0, 70vw, 100vh, 0);
+  }
+  40% {
+    clip: rect(0, 35vw, 100vh, 0);
+  }
+  60% {
+    clip: rect(0, 55vw, 100vh, 0);
+  }
+  80% {
+    clip: rect(0, 30vw, 100vh, 0);
+  }
+  100% {
+    clip: rect(0, 100vw, 100vh, 0);
+  }
+}
+
+
+@include keyframes(selectRight) {
+  0% {
+    clip: rect(0, 50vw, 100vh, 0);
+  }
+  20% {
+    clip: rect(0, 35vw, 100vh, 0);
+  }
+  40% {
+    clip: rect(0, 70vw, 100vh, 0);
+  }
+  60% {
+    clip: rect(0, 30vw, 100vh, 0);
+  }
+  80% {
+    clip: rect(0, 55vw, 100vh, 0);
+  }
+  100% {
+    clip: rect(0, 0vw, 100vh, 0);
+  }
+}
+
+.clip-block {
+    @include position(fixed, 0 0 0 0);
+    background: $red;
+    z-index: -1;
+}
+.clip-block + .clip-block {
+    background: $blue;
+}
+.clip-block--clipped {
+    transition: all 0.5s ease-out;
+    clip: rect(0, 50vw, 100vh, 0);
+    @include animation-iteration-count(1);
+}
+.clip-block--select-left {
+    @include animation(selectLeft 5s ease-in);
+    @include animation-fill-mode(forwards);
+}
+.clip-block--select-right {
+    @include animation(selectRight 5s ease-in);
+    @include animation-fill-mode(forwards);
+}
+
+.guess-block {
+
+}

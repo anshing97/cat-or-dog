@@ -1,0 +1,28 @@
+.display {
+    font-family: 'Droid Serif', serif;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    margin-bottom: $spacing;
+}
+.display--label {
+    font-size: 1rem;
+    text-decoration: underline;
+}
+
+.paragraph {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: $spacing*2;
+}
+.paragraph--emphasized {
+    font-size: 1.5rem;
+}
+.paragraph--subtext {
+    margin-top: -1.5*$spacing;
+    font-size: 0.875rem;
+}
+
+.big-text {
+    font-size: 5rem;
+    margin-bottom: $spacing*3;
+}

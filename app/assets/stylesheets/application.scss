@@ -1,8 +1,16 @@
-@import "bourbon/bourbon";
-@import "neat/neat";
+$max-width: 960px;
 
-h1 {
-    font-size: 12px;
-    font-weight: bold;
-    color: red;
-}
+// import vendor stuff
+@import 'https://fonts.googleapis.com/css?family=Droid+Serif|Roboto';
+@import 'vendor/reset-css/reset-css';
+@import 'vendor/bourbon/bourbon';
+@import 'vendor/neat/neat';
+
+// import components
+@import 'components/base';
+@import 'components/layout';
+@import 'components/typography';
+@import 'components/elements';
+
+
+

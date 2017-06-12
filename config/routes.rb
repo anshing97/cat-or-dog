@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
 
+    ## main
     root to: 'application#angular'
-
+    get '/backend' => 'application#backend'
 
     # posts
     post '/create_person' => 'person#new'

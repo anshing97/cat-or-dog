@@ -2,6 +2,14 @@
 
 Determine Cats and dogs preference based on height.
 
+## Todo
+
+* Update API documentation
+* Writes tests for API calls
+* Writes tests for front end
+* Automatically seed some data on db migration
+* Refactor code
+* Redo the 'thanks' page - just went with something quick right now
 
 # API Functionality
 
@@ -60,9 +68,10 @@ Preference: `dog` or `cat` (enum?)
 
 # References
 
-[Getting Started with Rails](http://guides.rubyonrails.org/getting_started.html)
-[Learn to Build Modern Web aApps with AngularJS and Ruby on Rails](https://thinkster.io/tutorials/angular-rails)
-[Installing bourbon for your rails project](https://howchoo.com/g/oti5mtcyzmj/install-bourbon-in-your-rails-project)
-
+* [Getting Started with Rails](http://guides.rubyonrails.org/getting_started.html)
+* [Learn to Build Modern Web aApps with AngularJS and Ruby on Rails](https://thinkster.io/tutorials/angular-rails)
+* [Installing bourbon for your rails project](https://howchoo.com/g/oti5mtcyzmj/install-bourbon-in-your-rails-project)
+* [Color Scheme](https://coolors.co/f4f1bb-ef626c-9bc1bc-5ca4a9-e6ebe0)
+* [Angular Mousewheel Directive](http://blog.sodhanalibrary.com/2015/04/angularjs-directive-for-mouse-wheel.html#.WT2aSxPyvUI)
 
 

@@ -4,6 +4,10 @@ class ApplicationController < ActionController::Base
 
 
     def angular
-        render 'layouts/application'
+        render 'layouts/cat-or-dog'
+    end
+
+    def backend
+        render 'layouts/backend'
     end
 end
