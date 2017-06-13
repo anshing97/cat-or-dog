@@ -25,6 +25,13 @@ class Person < ApplicationRecord
             #     message: "values must be #{preferences.keys}"
             # }
 
+    def as_json options={}
+      {
+            height: height,
+            preference: preference
+      }
+    end
+
     private
 
         def calculate_preference

@@ -1,15 +1,15 @@
 <body ng-app="CatOrDog" ng-controller="BackEndController">
-    <div class="outer-container">
+    <div class="backend-container">
         <div class="grid-container">
-            <div class="grid-container__column--big">
-                <h1>{{test}}</h1>
-                <div ng-repeat="p in preferences">
-                    height of {{ p.height }} likes dogs {{ p.preference.dog * 100 }}% of the time and cats {{ p.preference.cat * 100 }}% of the time
+            <div class="grid-container__column">
+                <h2 class="display">Preferences</h2>
+                <div class="backend-block" ng-repeat="p in preferences">
+                    height of {{ p.height }} prefer dogs {{ p.dog * 100 }}% and cats {{ p.cat * 100 }}%
                 </div>
             </div>
-            <div class="grid-container__column--bigger">
-                <h1>People</h1>
-                <div ng-repeat="p in people">
+            <div class="grid-container__column">
+                <h2 class="display">People</h2>
+                <div class="backend-block" ng-repeat="p in people">
                     height: {{ p.height }} likes: {{ p.preference }}
                 </div>
                 <form ng-submit="addPersonInfo()">

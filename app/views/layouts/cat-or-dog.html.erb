@@ -13,7 +13,7 @@
                 <p>{{currentUser.height | imperialHeight }}</p>
             </div>
             <form>
-                <input id="height-input" type="number" name="height" min="48" max="96" ng-model="currentUser.height" ng-keep-focus data-should-keep-focus="{{currentStage === 'height'}}" />
+                <input id="height-input" class="visually-hidden" type="number" name="height" min="48" max="96" ng-model="currentUser.height" ng-keep-focus data-should-keep-focus="{{currentStage === 'height'}}" />
                 <input type="submit" class="button" ng-click="advance('guess')" value="Continue"/>
             </form>
         </div>

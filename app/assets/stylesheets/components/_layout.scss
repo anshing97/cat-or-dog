@@ -117,6 +117,20 @@ body {
     @include animation-fill-mode(forwards);
 }
 
-.guess-block {
-
+// this is a backend layout
+.backend-container {
+    max-width: $max-width;
+    margin: $spacing*2 auto;
+}
+.grid-container {
+    @include grid-container;
+}
+.grid-container__column {
+    @include grid-column(3);
+    @include grid-media($full_grid){
+        @include grid-column(6);
+    }
+}
+.backend-block {
+    margin-bottom: $spacing;
 }

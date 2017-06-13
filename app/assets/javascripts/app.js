@@ -1,80 +1,27 @@
 app = angular.module('CatOrDog', []);
 
-app.controller('BackEndController', ['$scope', 'peopleService', function($scope, peopleService){
-    $scope.test = 'Hello Dog or Cat World!';
+// wrote something so I can look at the backend
+app.controller('BackEndController', ['$scope', 'apiService', function($scope, apiService){
 
-    // mock data
-    $scope.preferences = [
-        {
-            'height': 48,
-            'preference': {'cat': 0.3, 'dog': 0.7}
-        },
-        {
-            'height': 49,
-            'preference': {'cat': 0.3, 'dog': 0.7}
-        },
-        {
-            'height': 50,
-            'preference': {'cat': 0.5, 'dog': 0.5}
-        },
-        {
-            'height': 68,
-            'preference': {'cat': 0.13, 'dog': 0.87}
-        }
-    ];
+    apiService.getPeople();
+    apiService.getPreferences();
 
-
-    peopleService.getAll();
-    $scope.people = peopleService.people;
-
+    $scope.people = apiService.people;
+    $scope.preferences = apiService.preferences;
 
     $scope.addPersonInfo = function() {
 
-        peopleService.create(
+        apiService.create(
             {'height': $scope.height, 'preference': $scope.preference }
         );
         $scope.height = '';
         $scope.preference = '';
-
     }
 
-}]);
-
-app.factory('peopleService', ['$http', function($http){
-    var service = {
-        people: [],
-        getAll: getAll,
-        guess: guess,
-        create: create
-    }
-
-    function getAll() {
-        return $http.get('/people').success(function(obj){
-            angular.copy(obj.people, service.people);
-        });
-    }
-    function create(post) {
-        return $http.post('/create_person',post).success(function(obj){
-            service.people.push(obj);
-        });
-    }
-    function guess(getParams) {
-        var config = {
-            params: getParams
-        };
-        console.log('guess params');
-        console.log(config);
-        return $http.get('/guess',config).success(function(obj){
-            console.log('guess object', obj);
-            return obj;
-        });
-    }
-
-    return service;
 }]);
 
 // the main story machine
-app.controller('MainController', ['$scope', '$timeout', 'peopleService', function($scope, $timeout, peopleService){
+app.controller('MainController', ['$scope', '$timeout', 'apiService', function($scope, $timeout, apiService){
 
     var MAX_HEIGHT = 96,
         MIN_HEIGHT = 48,
@@ -137,7 +84,7 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
 
     $scope.confirmGuess = function ( confirmed ) {
         var userAnswer = confirmed ? $scope.currentUser.watsonGuess : ( ( $scope.currentUser.watsonGuess === 'cat') ? 'dog' : 'cat' );
-        peopleService.create(
+        apiService.create(
             {'height': $scope.currentUser.height, 'preference': userAnswer }
         );
 
@@ -154,7 +101,7 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
     $scope.$watch('currentStage',function(newValue, oldValue){
 
         if ( newValue === 'guess') {
-            peopleService.guess({'height': $scope.currentUser.height}).then(function(obj){
+            apiService.guess({'height': $scope.currentUser.height}).then(function(obj){
                 $scope.currentUser.watsonGuess = obj.data.guess;
                 if ( $scope.currentUser.watsonGuess === 'cat' ) {
                     $scope.currentUser.clipClass = 'clip-block--select-right';
@@ -183,6 +130,61 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
 
 }]);
 
+
+// services
+app.factory('apiService', ['$http', function($http){
+    var service = {
+        people: [],
+        preferences: [],
+        getPeople: getPeople,
+        getPreferences: getPreferences,
+        preference: preference,
+        guess: guess,
+        create: create
+    }
+
+    function getPeople() {
+        return $http.get('/people').success(function(obj){
+            angular.copy(obj.people, service.people);
+        });
+    }
+
+    function getPreferences() {
+        return $http.get('/preferences').success(function(obj){
+            angular.copy(obj.preferences, service.preferences);
+        });
+    }
+
+    function create(post) {
+        return $http.post('/create_person',post).success(function(obj){
+            service.people.push(obj.person);
+        });
+    }
+
+    function guess(getParams) {
+        var config = {
+            params: getParams
+        };
+        return $http.get('/guess',config).success(function(obj){
+            console.log('guess object', obj);
+            return obj;
+        });
+    }
+
+    function preference(getParams) {
+        var config = {
+            params: getParams
+        };
+        return $http.get('/preference',config).success(function(obj){
+            console.log('preference object', obj);
+            return obj;
+        });
+    }
+
+    return service;
+}]);
+
+// filters and directives
 app.filter('imperialHeight', function() {
   return function(input) {
     var feet = Math.floor(input / 12),
