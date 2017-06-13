@@ -16,6 +16,9 @@ app.controller('BackEndController', ['$scope', 'apiService', function($scope, ap
         );
         $scope.height = '';
         $scope.preference = '';
+
+        // get preferences again, since this will update
+        apiService.getPreferences();
     }
 
 }]);
