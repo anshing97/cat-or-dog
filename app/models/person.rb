@@ -18,12 +18,10 @@ class Person < ApplicationRecord
     # limit options to cat and dogs
     enum preference: [:cat, :dog]
 
+    # tried to write a validation here, but somehow because i'm using enums it doesn't work
+    # just validate it on the api call
     validates :preference,
             presence: true
-            # inclusion: {
-            #     in: preferences.keys,
-            #     message: "values must be #{preferences.keys}"
-            # }
 
     def as_json options={}
       {
