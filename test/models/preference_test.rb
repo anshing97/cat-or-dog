@@ -24,7 +24,7 @@ class PreferenceTest < ActiveSupport::TestCase
         Person.create(:height => unused_height, :preference => 'dog')
         assert Preference.where(:height => unused_height).first.cat == 0.0
 
-        # half and half
+        # 1/2 prefer cats
         Person.create(:height => unused_height, :preference => 'cat')
         assert Preference.where(:height => unused_height).first.cat == 0.5
 
@@ -32,7 +32,7 @@ class PreferenceTest < ActiveSupport::TestCase
         Person.create(:height => unused_height, :preference => 'cat')
         assert Preference.where(:height => unused_height).first.cat == 0.67
 
-        # half and half again
+        # 2/4 prefer cats
         Person.create(:height => unused_height, :preference => 'dog')
         assert Preference.where(:height => unused_height).first.cat == 0.5
 
