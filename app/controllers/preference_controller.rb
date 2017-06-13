@@ -10,7 +10,7 @@ class PreferenceController < ApplicationController
     end
 
     def find
-        error = ''
+
         query_height = params[:height].to_i
 
         if ( query_height < Person::MIN_HEIGHT or query_height > Person::MAX_HEIGHT )

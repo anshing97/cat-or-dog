@@ -39,7 +39,7 @@ body {
 .content-block {
     @include position(absolute, 50% null null 50%);
     @include transform(translate(-50%, -50%)); // shift it slightly above 50% to give it a better reading experience
-    width: 85%;
+    width: 75%;
 }
 .content-block--footer {
     top: 80%;

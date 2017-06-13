@@ -9,7 +9,7 @@ app.controller('BackEndController', ['$scope', 'apiService', function($scope, ap
     $scope.people = apiService.people;
     $scope.preferences = apiService.preferences;
 
-    $scope.addPersonInfo = function() {
+    function addPersonInfo() {
 
         apiService.create(
             {'height': $scope.height, 'preference': $scope.preference }
@@ -21,6 +21,8 @@ app.controller('BackEndController', ['$scope', 'apiService', function($scope, ap
         apiService.getPreferences();
     }
 
+    $scope.addPersonInfo = addPersonInfo;
+
 }]);
 
 // the main story machine
@@ -28,6 +30,7 @@ app.controller('MainController', ['$scope', '$timeout', 'apiService', function($
 
     var MAX_HEIGHT = 96,
         MIN_HEIGHT = 48,
+        DEFAULT_HEIGHT = 72,
         START_STAGE = 'intro';
 
     $scope.stages = [
@@ -36,42 +39,51 @@ app.controller('MainController', ['$scope', '$timeout', 'apiService', function($
         'guess',
         'thanks'
     ];
+
     $scope.currentUser = {
         height: 72,
         watsonGuess: '',
         clipClass: '',
-        guessPrase: '',
-        guessConfirmText: ''
+        guessConfirmText: '',
+        finalHeading: '',
+        finalParagraph: ''
     };
+    var oldPreference = null,
+        newPreference = null;
+
     $scope.currentStage = START_STAGE;
 
-    function resetUserData() {
+    function resetUserData () {
         $scope.currentUser.watsonGuess = '';
         $scope.currentUser.clipClass = '';
         $scope.currentUser.guessConfirmText = '';
-        $scope.currentUser.height = 72;
+        $scope.currentUser.height = DEFAULT_HEIGHT,
+        $scope.currentUser.finalHeading = '';
+        $scope.currentUser.finalParagraph = '',
+        oldPreference = null,
+        newPreference = null;
     }
 
-    $scope.advance = function (stage) {
+    function advance (stage) {
         console.log('advance to ' + stage);
         $scope.currentStage = stage;
     };
 
-    $scope.increaseHeight = function() {
+    function increaseHeight () {
         $scope.currentUser.height++;
         if ( $scope.currentUser.height > MAX_HEIGHT ) {
             $scope.currentUser.height = MAX_HEIGHT;
         }
     }
 
-    $scope.decreaseHeight = function () {
+    function decreaseHeight () {
         $scope.currentUser.height--;
         if ( $scope.currentUser.height < MIN_HEIGHT ) {
             $scope.currentUser.height = MIN_HEIGHT;
         }
     }
 
-    $scope.showGuessResults = function() {
+    function showGuessResults () {
         if ( $scope.currentUser.watsonGuess === 'cat' ) {
             $scope.currentUser.guessConfirmText = 'Mew! I am a cat person!';
             $scope.$apply();
@@ -81,36 +93,82 @@ app.controller('MainController', ['$scope', '$timeout', 'apiService', function($
         }
     }
 
-    $scope.canShowGuess = function () {
+    function canShowGuess () {
         return $scope.currentUser.guessConfirmText !== '';
     }
 
-    $scope.confirmGuess = function ( confirmed ) {
-        var userAnswer = confirmed ? $scope.currentUser.watsonGuess : ( ( $scope.currentUser.watsonGuess === 'cat') ? 'dog' : 'cat' );
-        apiService.create(
-            {'height': $scope.currentUser.height, 'preference': userAnswer }
-        );
+    function formatThanksMessage (confirmed, preference) {
+        apiService.preference({'height': $scope.currentUser.height}).then(function(obj){
+            if ( obj.data.response === 'ok') {
 
-        resetUserData();
+                var oldPercentage,
+                    newPercentage;
+
+                newPreference = obj.data.preference;
+
+                if ( confirmed ) {
+                    $scope.currentUser.finalHeading = 'We told you Watson was smart!';
+                } else {
+                    $scope.currentUser.finalHeading = 'Bummer. Watson can\'t be right all the time';
+                }
+
+                console.log("old preference", oldPreference);
+                console.log("new preference", newPreference);
+
+
+                oldPercentage = Math.round(oldPreference[preference] * 100) + '%';
+                newPercentage = Math.round(newPreference[preference] * 100) + '%';
+
+
+                $scope.currentUser.finalParagraph =
+                    'He now knows that people that are ' + imperialHeight($scope.currentUser.height) + ' prefer ' + preference + 's ' + newPercentage + ' of the time instead of ' + oldPercentage;
+
+                // show the final message
+                $scope.advance('thanks');
+            }
+        });
     }
 
+    function catOrDog() {
+
+
+    }
+
+    function confirmGuess ( confirmed ) {
+        userPreference = confirmed ? $scope.currentUser.watsonGuess : ( ( $scope.currentUser.watsonGuess === 'cat') ? 'dog' : 'cat' );
+        apiService.create(
+            {'height': $scope.currentUser.height, 'preference': userPreference }
+        );
+
+        // set a time out for API to update the preference calculation
+        $timeout(formatThanksMessage, 250, true, confirmed, userPreference);
+    }
+
+
+
     // setup watchers
+
     $scope.$watch('currentUser.height',function(newValue, oldValue){
         $scope.heightPercentage = (newValue - MIN_HEIGHT) * (100 - 0) / (MAX_HEIGHT - MIN_HEIGHT);
     });
 
     // sometimes we need to do some special things when the stage changes
-    // write them here
     $scope.$watch('currentStage',function(newValue, oldValue){
 
         if ( newValue === 'guess') {
             apiService.guess({'height': $scope.currentUser.height}).then(function(obj){
-                $scope.currentUser.watsonGuess = obj.data.guess;
-                if ( $scope.currentUser.watsonGuess === 'cat' ) {
-                    $scope.currentUser.clipClass = 'clip-block--select-right';
-                } else if ( $scope.currentUser.watsonGuess == 'dog') {
-                    $scope.currentUser.clipClass = 'clip-block--select-left';
-
+                if ( obj.data.response === 'ok') {
+                    $scope.currentUser.watsonGuess = obj.data.guess;
+                    if ( $scope.currentUser.watsonGuess === 'cat' ) {
+                        $scope.currentUser.clipClass = 'clip-block--select-right';
+                    } else if ( $scope.currentUser.watsonGuess == 'dog') {
+                        $scope.currentUser.clipClass = 'clip-block--select-left';
+                    }
+                }
+            });
+            apiService.preference({'height': $scope.currentUser.height}).then(function(obj){
+                if ( obj.data.response === 'ok') {
+                    oldPreference = obj.data.preference
                 }
             });
         };
@@ -126,10 +184,16 @@ app.controller('MainController', ['$scope', '$timeout', 'apiService', function($
             // tech-debt: this is really hacky, need of a better way to do this some other time
             $timeout(focusOnHeightInput, 100);
         };
-    })
+    });
 
-    // execute these
-    resetUserData();
+    // expose these to front end
+    $scope.resetUserData = resetUserData;
+    $scope.advance = advance;
+    $scope.increaseHeight = increaseHeight;
+    $scope.decreaseHeight = decreaseHeight;
+    $scope.showGuessResults = showGuessResults;
+    $scope.canShowGuess = canShowGuess;
+    $scope.confirmGuess = confirmGuess;
 
 }]);
 
@@ -169,7 +233,6 @@ app.factory('apiService', ['$http', function($http){
             params: getParams
         };
         return $http.get('/guess',config).success(function(obj){
-            console.log('guess object', obj);
             return obj;
         });
     }
@@ -179,7 +242,6 @@ app.factory('apiService', ['$http', function($http){
             params: getParams
         };
         return $http.get('/preference',config).success(function(obj){
-            console.log('preference object', obj);
             return obj;
         });
     }
@@ -187,14 +249,17 @@ app.factory('apiService', ['$http', function($http){
     return service;
 }]);
 
-// filters and directives
-app.filter('imperialHeight', function() {
-  return function(input) {
+// use this as well
+function imperialHeight(input) {
     var feet = Math.floor(input / 12),
         inches = input % 12;
 
-    return feet + 'ft ' + inches + 'in';
-  }
+    return feet + ' ft ' + inches + ' in';
+}
+
+// filters and directives
+app.filter('imperialHeight', function() {
+  return imperialHeight;
 });
 
 app.directive('ngKeepFocus', function() {

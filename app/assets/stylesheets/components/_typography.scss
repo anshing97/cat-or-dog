@@ -2,7 +2,7 @@
     font-family: 'Droid Serif', serif;
     font-size: 1.5rem;
     line-height: 1.4;
-    margin-bottom: $spacing;
+    margin-bottom: $spacing*2;
 }
 .display--label {
     font-size: 1rem;
@@ -13,6 +13,9 @@
     font-size: 1rem;
     line-height: 1.4;
     margin-bottom: $spacing*2;
+    + .paragraph {
+        margin-top: -1.5*$spacing;
+    }
 }
 .paragraph--emphasized {
     font-size: 1.5rem;
