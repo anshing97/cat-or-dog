@@ -9,9 +9,8 @@ Rails.application.routes.draw do
 
     # gets
     get '/people' => 'person#index'
-
-
-    get '/preference' => 'preference#index'
+    get '/preferences' => 'preference#index'
+    get '/preference' => 'preference#find'
     get '/guess' => 'preference#guess'
 
 end

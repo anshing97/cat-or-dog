@@ -2,16 +2,29 @@ class PreferenceController < ApplicationController
 
     def index
 
-        query_height = params[:height]
+        preferences = Preference.all
 
-        if query_height then
-            preference = Preference.find_by_height(query_height)
+        # render the json
+        render :json => { :response => 'ok', :preferences => preferences }
+
+    end
+
+    def find
+        error = ''
+        query_height = params[:height].to_i
+
+        if ( query_height < Person::MIN_HEIGHT or query_height > Person::MAX_HEIGHT )
+            error = "We only provides preferences for heights between #{Person::MIN_HEIGHT} and #{Person::MAX_HEIGHT}"
         else
-            preference = Preference.all
+            preference = Preference.find_by_height(query_height)
         end
 
         # render the json
-        render :json => { :response => 'ok', :preference => preference }
+        if error
+            render :json => { :response => 'error', :message => error }
+        else
+            render :json => { :response => 'ok', :preference => preference }
+        end
     end
 
     def guess

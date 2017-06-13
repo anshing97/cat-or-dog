@@ -20,4 +20,12 @@ class Preference < ApplicationRecord
         (1.0 - cat_preference).round(2)
     end
 
+    def as_json options={}
+      {
+            height: height,
+            cat: cat,
+            dog: dog
+      }
+    end
+
 end
