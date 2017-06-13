@@ -45,6 +45,8 @@ class PreferenceController < ApplicationController
     private
 
         def guess_cat_or_dog ( cat_percentage )
+
+            # really shouldn't introduce any randomness, but this makes it kinda fun
             random = Random.rand
 
             # figure out what our guess is
