@@ -10,11 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170610044545) do
+ActiveRecord::Schema.define(version: 20170613045758) do
 
   create_table "people", force: :cascade do |t|
     t.integer "height"
     t.integer "preference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "preferences", force: :cascade do |t|
+    t.integer "height"
+    t.float "cat_preference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

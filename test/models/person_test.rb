@@ -48,8 +48,6 @@ class PersonTest < ActiveSupport::TestCase
             person.height = (Person::MIN_HEIGHT..Person::MAX_HEIGHT).to_a.sample
             assert person.valid?
         end
-
     end
-
 
 end

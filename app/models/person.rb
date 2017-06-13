@@ -1,5 +1,7 @@
 class Person < ApplicationRecord
 
+    after_save :calculate_preference
+
     # some constants
     MIN_HEIGHT = 48
     MAX_HEIGHT = 96
@@ -22,5 +24,11 @@ class Person < ApplicationRecord
             #     in: preferences.keys,
             #     message: "values must be #{preferences.keys}"
             # }
+
+    private
+
+        def calculate_preference
+            Preference.update(self.height)
+        end
 
 end
