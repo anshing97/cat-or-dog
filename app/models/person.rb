@@ -1,5 +1,7 @@
 class Person < ApplicationRecord
 
+    after_save :calculate_preference
+
     # some constants
     MIN_HEIGHT = 48
     MAX_HEIGHT = 96
@@ -16,11 +18,22 @@ class Person < ApplicationRecord
     # limit options to cat and dogs
     enum preference: [:cat, :dog]
 
+    # tried to write a validation here, but somehow because i'm using enums it doesn't work
+    # just validate it on the api call
     validates :preference,
             presence: true
-            # inclusion: {
-            #     in: preferences.keys,
-            #     message: "values must be #{preferences.keys}"
-            # }
+
+    def as_json options={}
+      {
+            height: height,
+            preference: preference
+      }
+    end
+
+    private
+
+        def calculate_preference
+            Preference.update(self.height)
+        end
 
 end

@@ -11,7 +11,9 @@ Determine Cats and dogs preference based on height.
 * Refactor code
 * Redo the 'thanks' page - just went with something quick right now
 
-# API Functionality
+# API Functionality Brainstorm
+
+(actual implementation may vary)
 
 ### Create
 
@@ -48,23 +50,32 @@ Response:
 
 Get preferences of all heights
 ```
-preference?height=all
+preferences
 ```
 Response:
 ```
 [
-    { 'height': 100,  'preference': { 'cat' : 0.1, 'dog': 0.9 } },
-    { 'height': 101, 'preference': { 'cat' : 0.13, 'dog': 0.87 } },
+    { 'height': 70, 'cat' : 0.1, 'dog': 0.9 } ,
+    { 'height': 71, 'cat' : 0.13, 'dog': 0.87 },
     ...
 ]
 ```
 
-# Storing Data
+# Models
 
-*Person*
-Height: number (in inches)
-Preference: `dog` or `cat` (enum?)
+**Person**
 
+* Height: number (in inches)
+* Preference: `dog` or `cat` (enum?)
+
+**Preference**
+
+* Height: number (in inches)
+* Cat Preference: float (a percentage of how much a heigh prefers cats)
+
+## How it works
+
+Person models stores out raw data, Preference stores our prediction model so that we don't have to calcualte every single time when some fetche data. Whenever someone adds a person, trigger a recalculate of the corresponding Preference.
 
 # References
 

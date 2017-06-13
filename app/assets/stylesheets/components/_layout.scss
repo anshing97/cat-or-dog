@@ -39,7 +39,7 @@ body {
 .content-block {
     @include position(absolute, 50% null null 50%);
     @include transform(translate(-50%, -50%)); // shift it slightly above 50% to give it a better reading experience
-    width: 85%;
+    width: 75%;
 }
 .content-block--footer {
     top: 80%;
@@ -117,6 +117,20 @@ body {
     @include animation-fill-mode(forwards);
 }
 
-.guess-block {
-
+// this is a backend layout
+.backend-container {
+    max-width: $max-width;
+    margin: $spacing*2 auto;
+}
+.grid-container {
+    @include grid-container;
+}
+.grid-container__column {
+    @include grid-column(3);
+    @include grid-media($full_grid){
+        @include grid-column(6);
+    }
+}
+.backend-block {
+    margin-bottom: $spacing;
 }

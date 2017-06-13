@@ -48,6 +48,6 @@
 }
 
 // hack the forms
-input:not([type="submit"]) {
+.visually-hidden {
     @include visually-hidden;
 }

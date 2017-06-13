@@ -1,83 +1,36 @@
 app = angular.module('CatOrDog', []);
 
-app.controller('BackEndController', ['$scope', 'peopleService', function($scope, peopleService){
-    $scope.test = 'Hello Dog or Cat World!';
+// wrote something so I can look at the backend
+app.controller('BackEndController', ['$scope', 'apiService', function($scope, apiService){
 
-    // mock data
-    $scope.preferences = [
-        {
-            'height': 48,
-            'preference': {'cat': 0.3, 'dog': 0.7}
-        },
-        {
-            'height': 49,
-            'preference': {'cat': 0.3, 'dog': 0.7}
-        },
-        {
-            'height': 50,
-            'preference': {'cat': 0.5, 'dog': 0.5}
-        },
-        {
-            'height': 68,
-            'preference': {'cat': 0.13, 'dog': 0.87}
-        }
-    ];
+    apiService.getPeople();
+    apiService.getPreferences();
 
+    $scope.people = apiService.people;
+    $scope.preferences = apiService.preferences;
 
-    peopleService.getAll();
-    $scope.people = peopleService.people;
+    function addPersonInfo() {
 
-
-    $scope.addPersonInfo = function() {
-
-        peopleService.create(
+        apiService.create(
             {'height': $scope.height, 'preference': $scope.preference }
         );
         $scope.height = '';
         $scope.preference = '';
 
+        // get preferences again, since this will update
+        apiService.getPreferences();
     }
 
-}]);
+    $scope.addPersonInfo = addPersonInfo;
 
-app.factory('peopleService', ['$http', function($http){
-    var service = {
-        people: [],
-        getAll: getAll,
-        guess: guess,
-        create: create
-    }
-
-    function getAll() {
-        return $http.get('/people').success(function(obj){
-            angular.copy(obj.people, service.people);
-        });
-    }
-    function create(post) {
-        return $http.post('/create_person',post).success(function(obj){
-            service.people.push(obj);
-        });
-    }
-    function guess(getParams) {
-        var config = {
-            params: getParams
-        };
-        console.log('guess params');
-        console.log(config);
-        return $http.get('/guess',config).success(function(obj){
-            console.log('guess object', obj);
-            return obj;
-        });
-    }
-
-    return service;
 }]);
 
 // the main story machine
-app.controller('MainController', ['$scope', '$timeout', 'peopleService', function($scope, $timeout, peopleService){
+app.controller('MainController', ['$scope', '$timeout', 'apiService', function($scope, $timeout, apiService){
 
     var MAX_HEIGHT = 96,
         MIN_HEIGHT = 48,
+        DEFAULT_HEIGHT = 72,
         START_STAGE = 'intro';
 
     $scope.stages = [
@@ -86,42 +39,51 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
         'guess',
         'thanks'
     ];
+
     $scope.currentUser = {
         height: 72,
         watsonGuess: '',
         clipClass: '',
-        guessPrase: '',
-        guessConfirmText: ''
+        guessConfirmText: '',
+        finalHeading: '',
+        finalParagraph: ''
     };
+    var oldPreference = null,
+        newPreference = null;
+
     $scope.currentStage = START_STAGE;
 
-    function resetUserData() {
+    function resetUserData () {
         $scope.currentUser.watsonGuess = '';
         $scope.currentUser.clipClass = '';
         $scope.currentUser.guessConfirmText = '';
-        $scope.currentUser.height = 72;
+        $scope.currentUser.height = DEFAULT_HEIGHT,
+        $scope.currentUser.finalHeading = '';
+        $scope.currentUser.finalParagraph = '',
+        oldPreference = null,
+        newPreference = null;
     }
 
-    $scope.advance = function (stage) {
+    function advance (stage) {
         console.log('advance to ' + stage);
         $scope.currentStage = stage;
     };
 
-    $scope.increaseHeight = function() {
+    function increaseHeight () {
         $scope.currentUser.height++;
         if ( $scope.currentUser.height > MAX_HEIGHT ) {
             $scope.currentUser.height = MAX_HEIGHT;
         }
     }
 
-    $scope.decreaseHeight = function () {
+    function decreaseHeight () {
         $scope.currentUser.height--;
         if ( $scope.currentUser.height < MIN_HEIGHT ) {
             $scope.currentUser.height = MIN_HEIGHT;
         }
     }
 
-    $scope.showGuessResults = function() {
+    function showGuessResults () {
         if ( $scope.currentUser.watsonGuess === 'cat' ) {
             $scope.currentUser.guessConfirmText = 'Mew! I am a cat person!';
             $scope.$apply();
@@ -131,36 +93,86 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
         }
     }
 
-    $scope.canShowGuess = function () {
+    function canShowGuess () {
         return $scope.currentUser.guessConfirmText !== '';
     }
 
-    $scope.confirmGuess = function ( confirmed ) {
-        var userAnswer = confirmed ? $scope.currentUser.watsonGuess : ( ( $scope.currentUser.watsonGuess === 'cat') ? 'dog' : 'cat' );
-        peopleService.create(
-            {'height': $scope.currentUser.height, 'preference': userAnswer }
-        );
+    function formatThanksMessage (confirmed, preference) {
+        apiService.preference({'height': $scope.currentUser.height}).then(function(obj){
+            if ( obj.data.response === 'ok') {
 
-        resetUserData();
+                var oldPercentage,
+                    newPercentage;
+
+                newPreference = obj.data.preference;
+
+                if ( confirmed ) {
+                    $scope.currentUser.finalHeading = 'We told you Watson was smart!';
+                } else {
+                    $scope.currentUser.finalHeading = 'Bummer. Watson can\'t be right all the time';
+                }
+
+                newPercentage = Math.round(newPreference[preference] * 100) + '%';
+                height = imperialHeight($scope.currentUser.height);
+
+                // could not have an old preference before
+                if ( oldPreference ) {
+                    oldPercentage = Math.round(oldPreference[preference] * 100) + '%';
+
+                    $scope.currentUser.finalParagraph =
+                        'He now knows that people that are ' + height + ' prefer ' + preference + 's ' + newPercentage + ' of the time instead of ' + oldPercentage + '.';
+                } else {
+                    $scope.currentUser.finalParagraph =
+                        'You are actually the first ' + height + ' person  he\' met. He now believes all ' + height + ' people love ' + preference + 's.'
+
+                }
+
+                // show the final message
+                $scope.advance('thanks');
+            }
+        });
     }
 
+    function catOrDog() {
+
+
+    }
+
+    function confirmGuess ( confirmed ) {
+        userPreference = confirmed ? $scope.currentUser.watsonGuess : ( ( $scope.currentUser.watsonGuess === 'cat') ? 'dog' : 'cat' );
+        apiService.create(
+            {'height': $scope.currentUser.height, 'preference': userPreference }
+        );
+
+        // set a time out for API to update the preference calculation
+        $timeout(formatThanksMessage, 250, true, confirmed, userPreference);
+    }
+
+
+
     // setup watchers
+
     $scope.$watch('currentUser.height',function(newValue, oldValue){
         $scope.heightPercentage = (newValue - MIN_HEIGHT) * (100 - 0) / (MAX_HEIGHT - MIN_HEIGHT);
     });
 
     // sometimes we need to do some special things when the stage changes
-    // write them here
     $scope.$watch('currentStage',function(newValue, oldValue){
 
         if ( newValue === 'guess') {
-            peopleService.guess({'height': $scope.currentUser.height}).then(function(obj){
-                $scope.currentUser.watsonGuess = obj.data.guess;
-                if ( $scope.currentUser.watsonGuess === 'cat' ) {
-                    $scope.currentUser.clipClass = 'clip-block--select-right';
-                } else if ( $scope.currentUser.watsonGuess == 'dog') {
-                    $scope.currentUser.clipClass = 'clip-block--select-left';
-
+            apiService.guess({'height': $scope.currentUser.height}).then(function(obj){
+                if ( obj.data.response === 'ok') {
+                    $scope.currentUser.watsonGuess = obj.data.guess;
+                    if ( $scope.currentUser.watsonGuess === 'cat' ) {
+                        $scope.currentUser.clipClass = 'clip-block--select-right';
+                    } else if ( $scope.currentUser.watsonGuess == 'dog') {
+                        $scope.currentUser.clipClass = 'clip-block--select-left';
+                    }
+                }
+            });
+            apiService.preference({'height': $scope.currentUser.height}).then(function(obj){
+                if ( obj.data.response === 'ok') {
+                    oldPreference = obj.data.preference
                 }
             });
         };
@@ -176,20 +188,82 @@ app.controller('MainController', ['$scope', '$timeout', 'peopleService', functio
             // tech-debt: this is really hacky, need of a better way to do this some other time
             $timeout(focusOnHeightInput, 100);
         };
-    })
+    });
 
-    // execute these
-    resetUserData();
+    // expose these to front end
+    $scope.resetUserData = resetUserData;
+    $scope.advance = advance;
+    $scope.increaseHeight = increaseHeight;
+    $scope.decreaseHeight = decreaseHeight;
+    $scope.showGuessResults = showGuessResults;
+    $scope.canShowGuess = canShowGuess;
+    $scope.confirmGuess = confirmGuess;
 
 }]);
 
-app.filter('imperialHeight', function() {
-  return function(input) {
+
+// services
+app.factory('apiService', ['$http', function($http){
+    var service = {
+        people: [],
+        preferences: [],
+        getPeople: getPeople,
+        getPreferences: getPreferences,
+        preference: preference,
+        guess: guess,
+        create: create
+    }
+
+    function getPeople() {
+        return $http.get('/people').success(function(obj){
+            angular.copy(obj.people, service.people);
+        });
+    }
+
+    function getPreferences() {
+        return $http.get('/preferences').success(function(obj){
+            angular.copy(obj.preferences, service.preferences);
+        });
+    }
+
+    function create(post) {
+        return $http.post('/create_person',post).success(function(obj){
+            service.people.push(obj.person);
+        });
+    }
+
+    function guess(getParams) {
+        var config = {
+            params: getParams
+        };
+        return $http.get('/guess',config).success(function(obj){
+            return obj;
+        });
+    }
+
+    function preference(getParams) {
+        var config = {
+            params: getParams
+        };
+        return $http.get('/preference',config).success(function(obj){
+            return obj;
+        });
+    }
+
+    return service;
+}]);
+
+// use this as well
+function imperialHeight(input) {
     var feet = Math.floor(input / 12),
         inches = input % 12;
 
-    return feet + 'ft ' + inches + 'in';
-  }
+    return feet + ' ft ' + inches + ' in';
+}
+
+// filters and directives
+app.filter('imperialHeight', function() {
+  return imperialHeight;
 });
 
 app.directive('ngKeepFocus', function() {

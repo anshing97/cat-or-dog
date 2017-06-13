@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+cat_loving:
+  height: 48
+  cat_preference: 1.0
+
+dog_loving:
+  height: 96
+  cat_preference: 0.0
+
+split:
+  height: 72
+  cat_preference: 0.5

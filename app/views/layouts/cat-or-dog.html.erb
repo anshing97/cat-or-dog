@@ -13,7 +13,7 @@
                 <p>{{currentUser.height | imperialHeight }}</p>
             </div>
             <form>
-                <input id="height-input" type="number" name="height" min="48" max="96" ng-model="currentUser.height" ng-keep-focus data-should-keep-focus="{{currentStage === 'height'}}" />
+                <input id="height-input" class="visually-hidden" type="number" name="height" min="48" max="96" ng-model="currentUser.height" ng-keep-focus data-should-keep-focus="{{currentStage === 'height'}}" />
                 <input type="submit" class="button" ng-click="advance('guess')" value="Continue"/>
             </form>
         </div>
@@ -27,8 +27,8 @@
                 </div>
                 <div ng-if="canShowGuess()">
                     <p class="paragraph paragraph--emphasized">Watson says you are a {{currentUser.watsonGuess}} person</p>
-                    <button class="button button--fixed-width" ng-click="confirmGuess(true); advance('thanks');">{{currentUser.guessConfirmText}}</button>
-                    <button class="button button--fixed-width" ng-click="confirmGuess(false); advance('thanks');">Nope. Watson got it wrong.</button>
+                    <button class="button button--fixed-width" ng-click="confirmGuess(true);">{{currentUser.guessConfirmText}}</button>
+                    <button class="button button--fixed-width" ng-click="confirmGuess(false);">Nope. Watson got it wrong.</button>
                 </div>
             </div>
         </div>
@@ -41,9 +41,10 @@
     </div>
     <div class="full-height-block" ng-if="currentStage == 'thanks'" >
         <div class="content-block">
-            <h2 class="display">Thanks for taking our survey</h2>
-            <p class="paragraph">Because of your inputs, we've made Watson even more accurate in predicting people's preferences for dogs or cats.</p>
-            <button class="button" ng-click="advance('height')">Take the survey again</button>
+            <h2 class="display">{{currentUser.finalHeading}}</h2>
+            <p class="paragraph">Thanks to you, we've made Watson smarter.</p>
+            <p class="paragraph">{{currentUser.finalParagraph}}</p>
+            <button class="button" ng-click="advance('height'); resetUserData()">Try again</button>
         </div>
     </div>
 </body>
